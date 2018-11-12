@@ -21,7 +21,5 @@ const int N = 1000;
 
 #define ra (long long) rand()
 #define rm (RAND_MAX + 1)
-long long Rand(long long l, long long r) {
-	return (ra * rm * rm * rm + ra * rm * rm + ra * rm + ra) % (r - l + 1) + l;
-}
 
+long long Rand(long long l, long long r);
