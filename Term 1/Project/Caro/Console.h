@@ -9,7 +9,9 @@ int GetRows();
 
 int GetColumns();
 
-int& GetSound();
+int GetSound();
+
+void UpdateSound();
 
 void TextColor(int color);
 
@@ -32,4 +34,6 @@ void AssignCenter(string &s, string t);
 void SoundWin();
 
 void SoundLose();
+
+void SoundDraw();
 

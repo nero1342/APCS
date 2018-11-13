@@ -20,10 +20,14 @@ int GetColumns() {
 	return csbi.srWindow.Right - csbi.srWindow.Left + 1;
 }
 
-int sound = 1;
+int sound = 0;
 
-int& GetSound() {
+int GetSound() {
 	return sound;
+}
+
+void UpdateSound() {
+	sound ^= 1;
 }
 
 void TextColor(int color) {
@@ -98,6 +102,15 @@ void SoundLose() {
 	if (GetSound()) {
 		REP(i, 6) {
 			Beep(2000 - i * 100, 100 * i);
+		}
+		Beep(1400, 1000);
+	}
+}
+
+void SoundDraw() {
+	if (GetSound()) {
+		REP(i, 6) {
+			Beep(1000, i * 100);
 		}
 		Beep(1400, 1000);
 	}

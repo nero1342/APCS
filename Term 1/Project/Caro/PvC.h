@@ -2,9 +2,9 @@
 
 namespace Computer {
 	
-	void GetData(int table[N][N], int HeightOfTable, int WidthOfTable, int turn, int ltw);
+	void GetData(int table[N][N], int Height, int Width, int turn, int ltw);
 
-	pp Implementation();
+	pp Easy();
 
 	pp Pivot1(int turn);
 

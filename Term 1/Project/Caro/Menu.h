@@ -11,15 +11,13 @@ void ShowAbout();
 
 void MenuNewGame();
 
-void ShowStatics();
+void ShowStatistics();
 
 void UpdateIcon();
 
 void UpdateSizeGameBoard();
 
 void UpdateLengthToWin();
-
-void UpdateSound();
 
 void ResetToDefault();
 

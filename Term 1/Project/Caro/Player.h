@@ -18,7 +18,7 @@ namespace Player {
 
 	void UpdateIcon(int id, char c);
 
-	int GetStatic(int status, int level);
+	int GetStatistics(int status, int level);
 
 	int idH(int x);
 
@@ -28,15 +28,13 @@ namespace Player {
 
 	void ReadInit();
 
-	void ResetStatics();
+	void ResetStatistics();
 
-	void UpdateStatics(int value, int Difficulty);
-
-	void UpdateSizeTable(int h, int w);
+	void UpdateStatistics(int value, int Difficulty);
 
 	void Reload();
 
-	void Draw(int isPvComputer);
+	void Draw(int Difficulty);
 
 	void Message(string message, int isEndline, int isNumbered);
 

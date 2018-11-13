@@ -26,7 +26,7 @@ bool ValidWin(int table[N][N], int h, int w, int LenToWin) {
 	return false;
 }
 
-long long SureWin(int table[N][N], int c, int h, int w, int LenToWin) {
+long long MagicScore(int table[N][N], int c, int h, int w, int LenToWin) {
 	long long cntWaytoWin = 0, cntMagic = 0;
 	REP(dir, 4) {
 		int vr = dd[dir * 2], vc = cc[dir * 2];

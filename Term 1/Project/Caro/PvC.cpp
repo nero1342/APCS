@@ -11,27 +11,17 @@ namespace Computer {
 	
 	const long long inf = 1e6;
 
-	void GetData(int table[N][N], int HeightOfTable, int WidthOfTable, int turn, int ltw) {
-		REP(i, h = HeightOfTable) REP(j, w = WidthOfTable) myTable[i][j] = table[i][j];
+	void GetData(int table[N][N], int Height, int Width, int turn, int ltw) {
+		REP(i, h = Height) REP(j, w = Width) myTable[i][j] = table[i][j];
 		myTurn = turn;
 		LenToWin = ltw;
 	}
 
-	pp Implementation() {// Easy
-		vector<pp> candidate;
-		REP(i, h) REP(j, w) if (myTable[i][j] == -1) {
-			bool ok = false;
-			FOR(x, i - 1, i + 1) FOR(y, j - 1, j + 1) if (inside(x, y, h, w) && myTable[x][y] != -1) {
-				ok = true;
-			}
-			if (ok)
-				candidate.push_back(pp(i, j));
-		}
-		if (candidate.empty()) {
-			return pp(Rand(0, h - 1), Rand(0, w - 1));
-		}
-		int mychoice = Rand(0, candidate.size() - 1);
-		return candidate[mychoice];
+	long long CalScore(pp Point, int turn) {
+		myTable[Point.first][Point.second] = turn;
+		long long x = MagicScore(myTable, turn, h, w, LenToWin);
+		myTable[Point.first][Point.second] = -1;
+		return x;
 	}
 
 	pp Pivot1(int turn) {
@@ -44,14 +34,6 @@ namespace Computer {
 		}
 
 		return best;
-	}
-
-
-	long long CalScore(pp Point, int turn) {
-		myTable[Point.first][Point.second] = turn;
-		long long x = SureWin(myTable, turn, h, w, LenToWin);
-		myTable[Point.first][Point.second] = -1;
-		return x;
 	}
 
 	pp Pivot2(int turn) {
@@ -71,12 +53,12 @@ namespace Computer {
 
 	pp Pivot3(int turn) {
 		// Defense
-		int cnt = SureWin(myTable, 1 - turn, h, w, LenToWin);
+		int cnt = MagicScore(myTable, 1 - turn, h, w, LenToWin);
 		int best = cnt;
 		pp pbest = pp(-1, -1);
 		REP(i, h) REP(j, w) if (myTable[i][j] == -1) {
 			myTable[i][j] = turn;
-			int now = SureWin(myTable, 1 - turn, h, w, LenToWin);
+			int now = MagicScore(myTable, 1 - turn, h, w, LenToWin);
 			myTable[i][j] = -1;
 			if (now < best) {
 				best = now;
@@ -86,6 +68,23 @@ namespace Computer {
 		return pbest;
 	}
 
+	pp Easy() {// Implementation
+		vector<pp> candidate;
+		REP(i, h) REP(j, w) if (myTable[i][j] == -1) {
+			bool ok = false;
+			FOR(x, i - 1, i + 1) FOR(y, j - 1, j + 1) if (inside(x, y, h, w) && myTable[x][y] != -1) {
+				ok = true;
+			}
+			if (ok)
+				candidate.push_back(pp(i, j));
+		}
+		if (candidate.empty()) {
+			return pp(Rand(0, h - 1), Rand(0, w - 1));
+		}
+		int mychoice = Rand(0, candidate.size() - 1);
+		return candidate[mychoice];
+	}
+	
 	pp Medium() {
 		// Win
 		pp Win = Pivot1(myTurn);
@@ -102,7 +101,6 @@ namespace Computer {
 		int sum = 0;
 		REP(i, h) REP(j, w) {
 			if (myTable[i][j] != -1) sum++;
-
 		}
 		if (sum == 1)
 			return FindLongest(myTable, h, w, 1 - myTurn);

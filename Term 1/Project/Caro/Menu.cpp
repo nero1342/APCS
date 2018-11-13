@@ -149,7 +149,7 @@ void MenuNewGame() {
 	}
 }
 
-void ShowStatics() {
+void ShowStatistics() {
 	int rows = GetRows(), columns = GetColumns();
 	FOR(i, 20, rows - 1) ClearLine(i);
 	gotoxy(1, 23);
@@ -162,13 +162,13 @@ void ShowStatics() {
 	Player::ReadInit();
 	//
 	string line = "Easy:          ";
-	REP(j, 3) line = line + to_string(Player::GetStatic(1, j)) + "     ";
+	REP(j, 3) line = line + to_string(Player::GetStatistics(1, j)) + "     ";
 	Print(line, 1);
 	line = "Medium:        ";
-	REP(j, 3) line = line + to_string(Player::GetStatic(2, j)) + "     ";
+	REP(j, 3) line = line + to_string(Player::GetStatistics(2, j)) + "     ";
 	Print(line, 1);
 	line = "Hard:          ";
-	REP(j, 3) line = line + to_string(Player::GetStatic(3, j)) + "     ";
+	REP(j, 3) line = line + to_string(Player::GetStatistics(3, j)) + "     ";
 	Print(line, 1);
 
 	Print("", 1);
@@ -190,8 +190,8 @@ void ShowStatics() {
 		case 13: {
 			int y = GetConsoleCursorPosition(HOUT).Y;
 			if (y == resetline) {
-				Player::ResetStatics();
-				ShowStatics();
+				Player::ResetStatistics();
+				ShowStatistics();
 				return;
 			}
 			if (y == backline) {
@@ -213,6 +213,25 @@ void ShowStatics() {
 		}
 		}
 	}
+}
+
+void UpdateSizeGameBoard() {
+	int rows = GetRows(), columns = GetColumns();
+	FOR(i, 20, rows - 1) ClearLine(i);
+	gotoxy(1, 23);
+	Print("Height of table: ", 0); cout << Player::GetHeight() << endl;
+	Print("Width of table:  ", 0); cout << Player::GetWidth() << endl;
+	Print("Input new height(min = 1, max = 20): ", 0);
+	int x;
+	cin >> x;
+	Player::UpdateHeight(x);
+	Print("Input new width(min = 1, max = 40): ", 0);
+	cin >> x;
+	Player::UpdateWidth(x);
+	Player::UpdateInit();
+	Print("Change size of game board successfully.", 1);
+	char c = _getch();
+	while (c == 0 || c == 224) c = _getch();
 }
 
 void UpdateIcon() {
@@ -255,25 +274,6 @@ void UpdateIcon() {
 	while (c == 0 || c == 224) c = _getch();
 }
 
-void UpdateSizeGameBoard() {
-	int rows = GetRows(), columns = GetColumns();
-	FOR(i, 20, rows - 1) ClearLine(i);
-	gotoxy(1, 23);
-	Print("Height of table: ", 0); cout << Player::GetHeight() << endl;
-	Print("Width of table:  ", 0); cout << Player::GetWidth() << endl;
-	Print("Input new height(min = 1, max = 20): ", 0);
-	int x;
-	cin >> x;
-	Player::UpdateHeight(x);
-	Print("Input new width(min = 1, max = 40): ", 0);
-	cin >> x;
-	Player::UpdateWidth(x);
-	Player::UpdateInit();
-	Print("Change size of game board successfully.", 1);
-	char c = _getch();
-	while (c == 0 || c == 224) c = _getch();
-}
-
 void UpdateLengthToWin() {
 	int rows = GetRows(), columns = GetColumns();
 	FOR(i, 20, rows - 1) ClearLine(i);
@@ -288,10 +288,6 @@ void UpdateLengthToWin() {
 	Print("Update successfully.", 1);
 	char c = _getch();
 	while (c == 0 || c == 224) c = _getch();
-}
-
-void UpdateSound() {
-	GetSound() ^= 1;
 }
 
 void ResetToDefault() {
@@ -392,25 +388,25 @@ void MenuGame() {
 	gotoxy(1, 23);
 	cursor = GetConsoleCursorPosition(HOUT);
 	COORD Top = cursor;
-	Top.X = Print("NEW GAME ", 1) - 2;
+	Top.X = Print("NEW GAME  ", 1) - 2;
 	int newGameline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("LOAD GAME", 1);
+	Print("LOAD GAME ", 1);
 	int loadGameline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("STATICS  ", 1);
-	int staticsline = cursor.Y;
+	Print("STATISTICS", 1);
+	int Statisticsline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("OPTIONS  ", 1);
+	Print("OPTIONS   ", 1);
 	int optionline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("RELAXING ", 1);
+	Print("RELAXING  ", 1);
 	int relaxline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("ABOUT    ", 1);
+	Print("ABOUT     ", 1);
 	int aboutline = cursor.Y;
 	cursor = GetConsoleCursorPosition(HOUT);
-	Print("EXIT     ", 1);
+	Print("EXIT      ", 1);
 	int exitline = cursor.Y;
 	// Create help
 	gotoxy(1, rows - 2);
@@ -435,9 +431,9 @@ void MenuGame() {
 				Player::LoadGame();
 				Player::Move();
 			}
-			if (y == staticsline) {
+			if (y == Statisticsline) {
 				//LOAD GAME
-				ShowStatics();
+				ShowStatistics();
 			}
 			if (y == optionline) {
 				//LOAD GAME

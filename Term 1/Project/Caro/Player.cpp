@@ -14,6 +14,7 @@ namespace Player {
 	int turn, ComputerTurn, DifficultyComputer, LenToWin;
 	int columnsformessage = 60;
 	int totalStep;
+
 	vector<COORD> history;
 
 	vector< pair<string, int> > ListMessage;
@@ -52,15 +53,17 @@ namespace Player {
 		icon[id] = c;
 	}
 
-	int GetStatic(int status, int level) {
+	int GetStatistics(int status, int level) {
 		return Level[status][level];
 	}
 
 	int idH(int x) {
+		if (x < UpOfTable || x > UpOfTable + HeightOfTable * 2 - 1) return N - 1;
 		return (x - UpOfTable) / 2;
 	}
 
 	int idW(int y) {
+		if (y < LeftOfTable || y > LeftOfTable + WidthOfTable * 2 - 1) return N - 1;
 		return (y - LeftOfTable) / 2;
 	}
 
@@ -92,37 +95,37 @@ namespace Player {
 		InStats.close();
 	}
 
-	void ResetStatics() {
+	void ResetStatistics() {
 		FOR(i, 1, 3) REP(j, 3) Level[i][j] = 0;
 		UpdateInit();
 	}
 
-	void UpdateStatics(int value, int Difficulty) {
+	void UpdateStatistics(int value, int Difficulty) {
 		// 0 : Lose, 1 : Draw, 2 : Win
 		Level[Difficulty][value]++;
 		UpdateInit();
 	}
 
-	void UpdateSizeTable(int h, int w) {
-		HeightOfTable = h;
-		WidthOfTable = w;
-		UpdateInit();
-	}
-
 	void Reload() {
 		int rows = GetRows(), columns = GetColumns();
-		color[0] = Rand(1, 15);
-		color[1] = Rand(1, 15);
+		color[0] = 13;
+		color[1] = 14;
 		cntMessage = 0;
 		ListMessage.clear();
 		ClearScreen();
+		turn = 0;
 		memset(table, -1, sizeof table);
 		REP(i, rows) {
 			REP(j, columns) {
 				REP(k, 2) {
 					if (screen[i][j] == icon[k]) {
 						TextColor(color[k]);
-						table[idH(i)][idW(j)] = k;
+						int x = idH(i), y = idW(j);
+						if (x != N - 1 && y != N - 1) {
+							table[x][y] = k;
+							turn ^= 1;
+							totalStep--;
+						}
 					}
 				}
 				cout << screen[i][j];
@@ -132,14 +135,15 @@ namespace Player {
 		}
 	}
 
-	void Draw(int isPvComputer) {
+	void Draw(int Difficulty) {
 		int rows = GetRows(), columns = GetColumns();
+		turn = 0;
 		ReadInit();
 		InitListSavedGame();
 		ListMessage.clear();
 		history.clear();
-		if (isPvComputer) {
-			DifficultyComputer = isPvComputer;
+		if (Difficulty) {
+			DifficultyComputer = Difficulty;
 			ComputerTurn = 1;
 		}
 		else {
@@ -270,6 +274,7 @@ namespace Player {
 	void Unchoose() {
 		if (history.empty()) return;
 		COORD now = history.back();
+		totalStep++;
 		history.pop_back();
 		string mess = " undo ";
 		turn ^= 1;
@@ -310,7 +315,7 @@ namespace Player {
 
 			}
 		//	REP(i, 4) Unchoose();
-			UpdateStatics(turn * 2, DifficultyComputer);
+			UpdateStatistics(turn * 2, DifficultyComputer);
 			turn ^= 1;
 			Message(message, 1, 1);
 			//REP(i, 4) Unchoose();
@@ -320,7 +325,8 @@ namespace Player {
 		totalStep--;
 		if (totalStep == 0) {
 			Message("Drawwwwwwwwwwww :v :v :v :v :v :v :) :) :)", 1, 1);
-			UpdateStatics(1, DifficultyComputer);
+			SoundDraw();
+			UpdateStatistics(1, DifficultyComputer);
 			Sleep(3000);
 			return true;
 		}
@@ -353,7 +359,7 @@ namespace Player {
 				switch (DifficultyComputer) {
 				case 1: {
 					// Easy
-					if (Choose(FindPosition(Computer::Implementation()))) return;
+					if (Choose(FindPosition(Computer::Easy()))) return;
 					break;
 				}
 				case 2: {
@@ -500,9 +506,8 @@ namespace Player {
 		cin >> name;
 		ListMessage.back().first = ListMessage.back().first + name;
 		string filename = "Data\\" + name + ".car";
-		fstream output(filename);
-
-		if (output.good()) {
+		fstream out(filename);
+		if (out.good()) {
 			// Exist;
 			Message("This name already exists.", 0, 0);
 			char ch;
@@ -522,7 +527,8 @@ namespace Player {
 			ListSavedGame.push_back(name);
 			UpdateListSavedGame();
 		}
-		output.open(filename, fstream::out);
+		
+		ofstream output(filename);
 		output << HeightOfTable << ' ' << WidthOfTable << ' ' << DifficultyComputer << ' ' << icon[0] << ' ' << icon[1] << endl;
 		REP(i, HeightOfTable) {
 			REP(j, WidthOfTable) output << table[i][j] << ' ';
